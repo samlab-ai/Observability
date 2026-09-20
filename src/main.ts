@@ -2,6 +2,7 @@ import './styles.css';
 import './auth.css';
 import './oauth.css';
 import './watermark.css';
+import './constellation.css';
 
 type Status = 'operational' | 'degraded' | 'monitoring';
 type Service = { id: string; name: string; role: string; category: string; status: Status; latency: number; uptime: string; color: string; icon: string; endpoint: string; source: string };
@@ -47,3 +48,9 @@ function bind() { document.querySelector<HTMLFormElement>('#login-form')?.remove
 render(); setInterval(() => { tick++; if (view === 'overview') render(); }, 12000);
 loadTelemetry();
 restoreSession();
+
+function decorateConstellation() { const focus = document.querySelector<HTMLElement>('.focus'); if (!focus || document.querySelector('#evidence-constellation')) return; const panel = document.createElement('section'); panel.id = 'evidence-constellation'; panel.className = 'constellation-card'; panel.innerHTML = '<div class="constellation-head"><span><small>SIGNAL CONSTELLATION</small><b>Evidence agreement</b></span><strong>84%</strong></div><div class="signal-lines"><div><i class="signal official"></i><span>Official status</span><b>Operational</b></div><div><i class="signal probe"></i><span>API probe</span><b>842 ms</b></div><div><i class="signal public"></i><span>Public corroboration</span><b>38 reports</b></div></div><p><b>Impact path:</b> checkout assistant. One source is stale; confidence stays explainable.</p>'; const target = focus.querySelector('.big-number'); target?.before(panel); }
+const constellationObserver = new MutationObserver(decorateConstellation);
+const appRoot = document.querySelector('#app');
+if (appRoot) constellationObserver.observe(appRoot, { childList: true, subtree: true });
+decorateConstellation();
