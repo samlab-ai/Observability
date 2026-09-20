@@ -75,28 +75,28 @@ This repository now includes a GitHub Actions collector that refreshes public ve
 - `workflow_dispatch`: manually refresh signals and deploy
 - No vendor secrets are required by the public collector; private integrations belong in GitHub Actions secrets or a protected worker
 
-The static UI uses GitHub OAuth Device Flow directly, so the public Pages login does not require a paid provider or a separate backend. The optional `auth-server/` directory remains available for teams that need server-side sessions.
+The static UI uses the optional `auth-server/` companion for secure GitHub OAuth sessions. GitHub's Device Flow endpoint does not expose browser CORS headers, so it cannot be used directly from a static Pages page.
 
 The auth URL is configured as the repository variable `AUTH_BASE_URL`. It must be the Worker URL, such as `https://eagle-eye-auth.example.workers.dev`, not `https://samlab-ai.github.io/Observability/`. GitHub Pages serves the UI; it does not serve `/api/auth/*`.
 
 ## SaaS login contract
 
-The app includes a GitHub-only login screen using GitHub's official Device Flow. It opens GitHub verification, displays a one-time code, polls for approval, and keeps the short-lived token in session storage.
+The app includes a GitHub-only login screen. It redirects to the configured open-source auth server, which handles GitHub OAuth and returns an HttpOnly signed session.
 
 ### How to log in
 
 1. Open the Eagle Eye URL.
 2. Select **Continue with GitHub**.
 3. Authorize the Eagle Eye OAuth application with your GitHub account.
-4. Eagle Eye validates the approved GitHub token and opens the dashboard.
+4. The auth server validates the approval and redirects you to the dashboard.
 
 Any GitHub account can access Eagle Eye after authorizing the OAuth application. There are no default Eagle Eye usernames or passwords.
 
-To configure GitHub login, create a GitHub OAuth App under **Settings → Developer settings → OAuth Apps**, enable **Device Flow**, and keep the client ID public. Device Flow does not require a client secret in the static frontend.
+To configure GitHub login, create a GitHub OAuth App under **Settings → Developer settings → OAuth Apps**, set its callback URL to your auth server's `/api/auth/github/callback`, and keep the client secret only in the auth server environment.
 
 The login is GitHub-only. Eagle Eye does not create local passwords and does not store GitHub passwords or OAuth access tokens. The auth server returns a signed, `HttpOnly`, `Secure`, `SameSite=Lax` session cookie after GitHub confirms the account.
 
-For a zero-bill setup, host the static UI on free GitHub Pages and use Device Flow. No separate auth host or trial service is required. The optional Node auth server is only for deployments that require server-side sessions.
+For a zero-bill setup, host the static UI on free GitHub Pages and run the open-source Node auth server on a machine you already own. No paid provider or trial service is required, but a secure OAuth callback must run somewhere outside Pages.
 
 ## No-cost and open-source policy
 
