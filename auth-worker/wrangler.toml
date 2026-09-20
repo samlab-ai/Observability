@@ -1,0 +1,11 @@
+name = "eagle-eye-auth"
+main = "src/index.ts"
+compatibility_date = "2026-09-20"
+
+[vars]
+APP_ORIGIN = "https://samlab-ai.github.io/Observability/"
+ALLOWED_GITHUB_USERS = "samlab-ai"
+OWNER_GITHUB_USERS = "samlab-ai"
+OPERATOR_GITHUB_USERS = ""
+
+# Set these with `wrangler secret put`; never commit them.
