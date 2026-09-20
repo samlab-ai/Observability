@@ -47,7 +47,7 @@ type Signal = {
 }
 ```
 
-Useful collector targets include vendor status pages and APIs, HTTP/TCP/DNS probes, synthetic user journeys, GitHub webhooks, Sentry events, Cloudflare health checks, AWS/GCP service health, and public incident aggregators. Keep third-party requests behind the collector so the browser only receives normalized health facts.
+Useful collector targets include vendor status pages and APIs, HTTP/TCP/DNS probes, synthetic user journeys, GitHub webhooks, Sentry events, public DNS health checks, and public incident aggregators. Keep third-party requests behind the collector so the browser only receives normalized health facts.
 
 ## GitHub Pages
 
@@ -57,7 +57,7 @@ Useful collector targets include vendor status pages and APIs, HTTP/TCP/DNS prob
 
 ### Private access and roles
 
-Standard public GitHub Pages cannot enforce a private user allowlist. Do not add a fake client-side login. For a real restricted deployment, keep the repository private and put the Pages hostname behind Cloudflare Access (or use GitHub Enterprise Cloud Pages visibility where available). Configure GitHub organization membership as the identity allowlist, then map teams to `Owner`, `Operator`, and `Viewer` policies. See [ACCESS_CONTROL.md](ACCESS_CONTROL.md) for the exact model and collector authorization boundary.
+Standard public GitHub Pages cannot enforce private access by itself. Eagle Eye uses GitHub OAuth through the open-source `auth-server/` companion. See [ACCESS_CONTROL.md](ACCESS_CONTROL.md) for the security boundary.
 
 ## Product boundary
 
@@ -70,13 +70,13 @@ This repository now includes a GitHub Actions collector that refreshes public ve
 - `workflow_dispatch`: manually refresh signals and deploy
 - No vendor secrets are required by the public collector; private integrations belong in GitHub Actions secrets or a protected worker
 
-The optional `auth-worker/` directory provides the free GitHub OAuth login backend. Deploy it to a serverless Worker, add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as GitHub Actions secrets, then run **Deploy Eagle Eye Auth** manually. Set `VITE_AUTH_BASE_URL` to the resulting worker URL when building the Pages UI.
+The `auth-server/` directory provides a dependency-free GitHub OAuth login backend built on Node.js standard-library APIs. It has no paid provider, trial, or proprietary SDK requirement. Run it on a machine you control and set `VITE_AUTH_BASE_URL` to its HTTPS URL when building the Pages UI.
 
 The auth URL is configured as the repository variable `AUTH_BASE_URL`. It must be the Worker URL, such as `https://eagle-eye-auth.example.workers.dev`, not `https://samlab-ai.github.io/Observability/`. GitHub Pages serves the UI; it does not serve `/api/auth/*`.
 
 ## SaaS login contract
 
-The app includes a production-shaped login screen with **Continue with GitHub** as the free identity-provider option. It starts at `GET /api/auth/github`, then the server handles the OAuth callback and returns the user to Eagle Eye. GitHub Pages does not provide that API, so a real SaaS deployment must attach an API service at that route or configure a reverse proxy.
+The app includes a production-shaped login screen with **Continue with GitHub** as the identity-provider option. It starts at `GET /api/auth/github`, then the open-source server handles the OAuth callback and returns the user to Eagle Eye. GitHub Pages does not provide that API, so a secure login server must run separately.
 
 ### How to log in
 
@@ -85,9 +85,9 @@ The app includes a production-shaped login screen with **Continue with GitHub** 
 3. Authorize the Eagle Eye OAuth application with your GitHub account.
 4. The auth service creates your Eagle Eye session and redirects you to the dashboard.
 
-The workspace administrator must first add your GitHub username or organization team to the allowlist. There are no default Eagle Eye usernames or passwords.
+Any GitHub account can access Eagle Eye after authorizing the OAuth application. There are no default Eagle Eye usernames or passwords.
 
-To configure the free GitHub provider, create a GitHub OAuth App under **Settings → Developer settings → OAuth Apps**, set the callback URL to `https://YOUR-AUTH-HOST/api/auth/github/callback`, and store the client ID and secret only in the server environment. Map GitHub organization membership to `Owner`, `Operator`, and `Viewer` roles server-side.
+To configure GitHub login, create a GitHub OAuth App under **Settings → Developer settings → OAuth Apps**, set the callback URL to `https://YOUR-AUTH-HOST/api/auth/github/callback`, and store the client ID and secret only in the server environment. The server creates an HttpOnly signed session for every authenticated GitHub account.
 
 Expected request:
 
@@ -97,4 +97,12 @@ Expected request:
 
 Expected success response: `200` with a secure, `HttpOnly`, `SameSite=Lax` session cookie. Expected failure response: `401`. Hash passwords with Argon2id or bcrypt, rate-limit login attempts, require MFA for operators, and enforce RBAC on every API request. Never store passwords or long-lived tokens in the browser.
 
-For an all-GitHub stack, host the static UI on Pages, run the auth/collector API as a container on a GitHub-connected platform, and store configuration in GitHub Actions environments and secrets. Public Pages alone cannot provide username/password authentication.
+For a zero-bill setup, host the static UI on free GitHub Pages and run `auth-server/` on a machine you already own. GitHub Pages alone cannot provide secure OAuth callbacks. No hosted service can honestly be guaranteed permanently free; self-hosting is the only way to guarantee no hosting invoice or trial expiry.
+
+## No-cost and open-source policy
+
+- Runtime code uses Vite, TypeScript, Node.js standard-library APIs, and GitHub OAuth.
+- No paid npm package, proprietary auth SDK, Cloudflare account, or trial-only service is required.
+- GitHub Pages and GitHub Actions are used for the public dashboard and scheduled public checks.
+- GitHub OAuth is free, but creating an OAuth App still requires a GitHub account.
+- Keep OAuth secrets outside Git and never put them in Pages assets.

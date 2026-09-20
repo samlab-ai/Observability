@@ -2,30 +2,24 @@
 
 ## Important boundary
 
-A normal public GitHub Pages site cannot enforce a private allowlist or RBAC. A browser-only gate is not security because the built files are still publicly downloadable.
+A public GitHub Pages site cannot run a secure OAuth callback. A browser-only gate is not security because the built files are still publicly downloadable.
 
-Eagle Eye therefore uses this deployment model:
+Eagle Eye therefore uses this no-cost, open-source deployment model:
 
 ```text
-GitHub Actions -> GitHub Pages -> Cloudflare Access -> approved people
-                                      |
-                                      +-- GitHub OAuth / organization membership
-                                      +-- role policies
+GitHub Actions -> GitHub Pages (UI)
+                         |
+                         +-- self-hosted auth-server (GitHub OAuth)
 ```
 
 ## Recommended setup
 
-1. Keep the repository private unless the dashboard itself is intended to be public.
-2. Deploy the site with `.github/workflows/deploy.yml`.
-3. Put a custom domain in front of the Pages site and proxy it through Cloudflare.
-4. In Cloudflare Zero Trust, create an Access application for the dashboard hostname.
-5. Add GitHub as an identity provider and restrict the policy to your GitHub organization.
-6. Add individual users or teams to the organization. Removing a person from the organization removes dashboard access after their Access session expires.
-7. Use separate Access policies for roles:
-   - `Owner`: organization owners; full dashboard and administration access.
-   - `Operator`: the observability team; dashboard, incidents, and collector operations.
-   - `Viewer`: read-only dashboard and incident visibility.
-8. Set session duration to a short operational window, enable MFA through the identity provider, and deny everyone else.
+1. Deploy the site with `.github/workflows/deploy.yml`.
+2. Run `auth-server/` on a machine you control with HTTPS.
+3. Create a GitHub OAuth App whose callback is `https://YOUR-AUTH-HOST/api/auth/github/callback`.
+4. Set `VITE_AUTH_BASE_URL` to the auth server URL when building Pages.
+5. Any GitHub account that completes OAuth can access the dashboard.
+6. GitHub handles account security and optional MFA; the server stores no GitHub password.
 
 ## API and collector authorization
 
@@ -37,6 +31,6 @@ The static dashboard must never contain vendor tokens. Run collectors and any fu
 
 Validate the identity token server-side on every request. Do not trust a role stored in `localStorage`, query parameters, or client-rendered HTML.
 
-## GitHub-only option
+## Cost boundary
 
-GitHub Enterprise Cloud can restrict Pages visibility for private repositories in supported organizations. If that feature is available to your organization, use GitHub organization membership as the allowlist and keep the repository private. For standard public GitHub Pages, use an access proxy such as Cloudflare Access; GitHub Pages alone cannot provide this control.
+The repository contains no required paid service, trial dependency, or proprietary runtime. A machine, VPS, or hosted runtime may have its own cost; self-hosting the small Node server is the only way to guarantee zero hosting cost.

@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "collect:status": "node scripts/collect-status.mjs",
+    "auth": "node auth-server/server.mjs",
     "preview": "vite preview"
   },
   "devDependencies": {
