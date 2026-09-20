@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-09-20T18:39:25.351Z",
+  "collector": "github-actions",
+  "observations": [
+    {
+      "service": "stripe",
+      "status": "monitoring",
+      "latency": 934,
+      "source": "official",
+      "evidenceUrl": "https://status.stripe.com/api/v2/summary.json",
+      "error": "HTTP 404"
+    },
+    {
+      "service": "vercel",
+      "status": "operational",
+      "latency": 90,
+      "source": "official",
+      "evidenceUrl": "https://www.vercel-status.com/api/v2/summary.json"
+    },
+    {
+      "service": "github",
+      "status": "operational",
+      "latency": 79,
+      "source": "official",
+      "evidenceUrl": "https://www.githubstatus.com/api/v2/summary.json"
+    },
+    {
+      "service": "openai",
+      "status": "operational",
+      "latency": 300,
+      "source": "official",
+      "evidenceUrl": "https://status.openai.com/api/v2/summary.json"
+    },
+    {
+      "service": "sentry",
+      "status": "operational",
+      "latency": 300,
+      "source": "official",
+      "evidenceUrl": "https://status.sentry.io/api/v2/summary.json"
+    },
+    {
+      "service": "slack",
+      "status": "monitoring",
+      "latency": 412,
+      "source": "official",
+      "evidenceUrl": "https://slack-status.com/api/v2/summary.json",
+      "error": "HTTP 404"
+    },
+    {
+      "service": "cloudflare",
+      "status": "degraded",
+      "latency": 555,
+      "source": "official",
+      "evidenceUrl": "https://www.cloudflarestatus.com/api/v2/summary.json"
+    }
+  ]
+}
