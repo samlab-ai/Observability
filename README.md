@@ -72,6 +72,8 @@ This repository now includes a GitHub Actions collector that refreshes public ve
 
 The optional `auth-worker/` directory provides the free GitHub OAuth login backend. Deploy it to a serverless Worker, add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as GitHub Actions secrets, then run **Deploy Eagle Eye Auth** manually. Set `VITE_AUTH_BASE_URL` to the resulting worker URL when building the Pages UI.
 
+The auth URL is configured as the repository variable `AUTH_BASE_URL`. It must be the Worker URL, such as `https://eagle-eye-auth.example.workers.dev`, not `https://samlab-ai.github.io/Observability/`. GitHub Pages serves the UI; it does not serve `/api/auth/*`.
+
 ## SaaS login contract
 
 The app includes a production-shaped login screen with **Continue with GitHub** as the free identity-provider option. It starts at `GET /api/auth/github`, then the server handles the OAuth callback and returns the user to Eagle Eye. GitHub Pages does not provide that API, so a real SaaS deployment must attach an API service at that route or configure a reverse proxy.
