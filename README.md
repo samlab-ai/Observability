@@ -12,8 +12,13 @@ Eagle Eye is a GitHub-friendly SaaS and web-services observability control room.
 - GitHub Pages deployment workflow in `.github/workflows/deploy.yml`
 - Private access and RBAC deployment guidance in `ACCESS_CONTROL.md`
 - Scheduled public status collection via `scripts/collect-status.mjs`
+- Product/IP notices in `NOTICE.md`
 
 The current UI uses a deterministic local signal set so it runs safely as a static GitHub Pages site. This is intentional: browser-only apps cannot safely hold private API keys, and many vendor APIs do not allow cross-origin requests. The collector contract below is the extension point for a small server-side worker.
+
+## The distinctive idea
+
+Eagle Eye is built around **Signal Constellation**: an evidence-weighted dependency graph that fuses official status pages, direct probes, synthetic journeys, public corroboration, and application telemetry. It preserves uncertainty when a source is missing, then explains which product path is most likely affected and why. This is the public product description; detailed invention records, claims, diagrams, experiments, and filing strategy stay outside this public repository.
 
 ## Run locally
 

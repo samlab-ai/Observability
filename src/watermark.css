@@ -1,0 +1,1 @@
+.product-watermark{position:fixed;right:18px;bottom:14px;z-index:20;color:#8d9c95;font:8px 'DM Mono',monospace;letter-spacing:.16em;opacity:.62;pointer-events:none;user-select:none}.auth-shell+.product-watermark{color:#91a79d;opacity:.72}@media(max-width:720px){.product-watermark{right:12px;bottom:10px;font-size:7px;letter-spacing:.1em}}
