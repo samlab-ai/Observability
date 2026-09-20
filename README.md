@@ -89,13 +89,7 @@ Any GitHub account can access Eagle Eye after authorizing the OAuth application.
 
 To configure GitHub login, create a GitHub OAuth App under **Settings → Developer settings → OAuth Apps**, set the callback URL to `https://YOUR-AUTH-HOST/api/auth/github/callback`, and store the client ID and secret only in the server environment. The server creates an HttpOnly signed session for every authenticated GitHub account.
 
-Expected request:
-
-```json
-{ "username": "you@company.com", "password": "..." }
-```
-
-Expected success response: `200` with a secure, `HttpOnly`, `SameSite=Lax` session cookie. Expected failure response: `401`. Hash passwords with Argon2id or bcrypt, rate-limit login attempts, require MFA for operators, and enforce RBAC on every API request. Never store passwords or long-lived tokens in the browser.
+The login is GitHub-only. Eagle Eye does not create local passwords and does not store GitHub passwords or OAuth access tokens. The auth server returns a signed, `HttpOnly`, `Secure`, `SameSite=Lax` session cookie after GitHub confirms the account.
 
 For a zero-bill setup, host the static UI on free GitHub Pages and run `auth-server/` on a machine you already own. GitHub Pages alone cannot provide secure OAuth callbacks. No hosted service can honestly be guaranteed permanently free; self-hosting is the only way to guarantee no hosting invoice or trial expiry.
 
@@ -106,3 +100,9 @@ For a zero-bill setup, host the static UI on free GitHub Pages and run `auth-ser
 - GitHub Pages and GitHub Actions are used for the public dashboard and scheduled public checks.
 - GitHub OAuth is free, but creating an OAuth App still requires a GitHub account.
 - Keep OAuth secrets outside Git and never put them in Pages assets.
+
+## Product preview
+
+![Eagle Eye command center](docs/eagle-eye-command-center.png)
+
+The preview shows the service health table, live activity feed, focused dependency latency, and operational metrics in one scan-friendly control room.
