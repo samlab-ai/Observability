@@ -13,6 +13,7 @@ Eagle Eye is a GitHub-friendly SaaS and web-services observability control room.
 - Private access and RBAC deployment guidance in `ACCESS_CONTROL.md`
 - Scheduled public status collection via `scripts/collect-status.mjs`
 - Product/IP notices in `NOTICE.md`
+- Competitive positioning and benchmark plan in `docs/COMPETITIVE_EDGE.md`
 
 The current UI uses a deterministic local signal set so it runs safely as a static GitHub Pages site. This is intentional: browser-only apps cannot safely hold private API keys, and many vendor APIs do not allow cross-origin requests. The collector contract below is the extension point for a small server-side worker.
 
