@@ -26,7 +26,7 @@ const activities = [
 let view = 'overview'; let selected = 'openai'; let filter = 'All services'; let tick = 0;
 const app = document.querySelector<HTMLDivElement>('#app')!;
 const authBaseUrl = ((import.meta as ImportMeta & { env?: Record<string, string> }).env?.VITE_AUTH_BASE_URL ?? '').replace(/\/$/, '');
-let isAuthenticated = false;
+let isAuthenticated = true;
 const getService = (id: string) => services.find((item) => item.id === id) ?? services[0];
 const label = (status: Status) => status === 'operational' ? 'Operational' : status === 'degraded' ? 'Degraded' : 'Monitoring';
 const toast = (message: string) => { const node = document.querySelector('#toast'); if (!node) return; node.textContent = message; node.classList.add('show'); setTimeout(() => node.classList.remove('show'), 2300); };

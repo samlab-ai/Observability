@@ -1,5 +1,9 @@
 # Access control and RBAC
 
+## Current access mode
+
+Eagle Eye is currently public and has no login gate. Anyone with the GitHub Pages URL can view the dashboard. This is intentional for the free public demo.
+
 ## Important boundary
 
 A public GitHub Pages site cannot run a secure OAuth callback. A browser-only gate is not security because the built files are still publicly downloadable.
