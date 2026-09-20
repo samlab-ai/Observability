@@ -72,7 +72,18 @@ This repository now includes a GitHub Actions collector that refreshes public ve
 
 ## SaaS login contract
 
-The app includes a production-shaped login screen. It sends credentials to `POST /api/auth/login` and only marks the browser session active after the server returns success. GitHub Pages does not provide that API, so a real SaaS deployment must attach an API service at that route or configure a reverse proxy.
+The app includes a production-shaped login screen with **Continue with GitHub** as the free identity-provider option. It starts at `GET /api/auth/github`, then the server handles the OAuth callback and returns the user to Eagle Eye. GitHub Pages does not provide that API, so a real SaaS deployment must attach an API service at that route or configure a reverse proxy.
+
+### How to log in
+
+1. Open the Eagle Eye URL.
+2. Select **Continue with GitHub**.
+3. Authorize the Eagle Eye OAuth application with your GitHub account.
+4. The auth service creates your Eagle Eye session and redirects you to the dashboard.
+
+The workspace administrator must first add your GitHub username or organization team to the allowlist. There are no default Eagle Eye usernames or passwords.
+
+To configure the free GitHub provider, create a GitHub OAuth App under **Settings → Developer settings → OAuth Apps**, set the callback URL to `https://YOUR-AUTH-HOST/api/auth/github/callback`, and store the client ID and secret only in the server environment. Map GitHub organization membership to `Owner`, `Operator`, and `Viewer` roles server-side.
 
 Expected request:
 
